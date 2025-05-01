@@ -86,6 +86,12 @@ export const ResultStatus = {
 
 /**
  * check is argument match "this"
+ *
+ * @example
+ * ```ts
+ * // on CMD.setFunction
+ * if(Is.player(data.args["target"])) data.args["target"].sendMessage("YEY...")
+ * ````
  */
 export const Is = {
   /**
@@ -165,7 +171,7 @@ export const Is = {
 /**
  * custom command creator.
  *
- * @includeExample example/tp.ts:9-31
+ * @includeExample src/example/tp.ts:4-27
  * */
 export class CMD {
   /** command object. */

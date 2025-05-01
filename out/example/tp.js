@@ -1,11 +1,5 @@
-import {
-  CommandPermissionLevel,
-  CustomCommandStatus,
-  Player,
-  Vector3,
-} from "@minecraft/server";
-import { CMD, Is, ResultStatus } from "../src/cc";
-
+import { CommandPermissionLevel } from "@minecraft/server";
+import { CMD, Is, ResultStatus } from "../cc";
 const command = new CMD()
   .setName("tp")
   .setDescription("tp player to coord")
@@ -14,7 +8,6 @@ const command = new CMD()
   .addLocation("location", true)
   .setFunction((eventData) => {
     const { source, args } = eventData;
-
     if (
       !source.sourceEntity ||
       source.sourceEntity?.typeId !== "minecraft:player"
@@ -23,9 +16,8 @@ const command = new CMD()
     if (!Is.player(args["player"]))
       return ResultStatus.failure("arg player need to be a player entity");
     if (!args["location"]) return ResultStatus.failure("need to be location");
-
     const target = args["player"];
     target.teleport(args["location"]);
-
     return ResultStatus.success();
-  }).register()
+  })
+  .register();

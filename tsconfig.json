@@ -15,13 +15,14 @@
     "declaration": false,
     "sourceMap": false,
     "removeComments": false,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
-    "out"
+    "out",
+    "docs"
   ]
 }

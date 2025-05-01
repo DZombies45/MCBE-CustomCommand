@@ -1,10 +1,5 @@
-import {
-  CommandPermissionLevel,
-  CustomCommandStatus,
-  Player,
-  Vector3,
-} from "@minecraft/server";
-import { CMD, Is, ResultStatus } from "../src/cc";
+import { CommandPermissionLevel } from "@minecraft/server";
+import { CMD, Is, ResultStatus } from "../cc";
 
 const command = new CMD()
   .setName("tp")
@@ -28,4 +23,5 @@ const command = new CMD()
     target.teleport(args["location"]);
 
     return ResultStatus.success();
-  }).register()
+  })
+  .register();
