@@ -1,0 +1,22 @@
+{
+  "name": "CustomCommand",
+  "version": "1.0.0",
+  "main": "customCommand.js",
+  "scripts": {
+    "docs": "typedoc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "import": "rm -r ./src | cp -r ~/storage/downloads/Termux/MCBE-CustomCommand/src ./ | echo \"selesai import\"",
+    "export": "tsc && npx prettier --write '**/*.js' && cp -r ./src ~/storage/downloads/Termux/MCBE-CustomCommand/ && rm -r ~/storage/downloads/Termux/MCBE-CustomCommand/out && cp -r ./out ~/storage/downloads/Termux/MCBE-CustomCommand/ | echo \"selesai export\""
+  },
+  "author": "Dzombies45",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@minecraft/server": "^2.1.0-beta.1.21.90-preview.20"
+  },
+  "devDependencies": {
+    "typedoc": "^0.28.3",
+    "typedoc-github-theme": "^0.3.0",
+    "typedoc-plugin-include-example": "^2.0.3"
+  }
+}

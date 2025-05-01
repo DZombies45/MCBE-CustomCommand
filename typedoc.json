@@ -1,0 +1,29 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "plugin": ["typedoc-plugin-include-example","typedoc-github-theme"],
+  "tsconfig": "./tsconfig.json",
+  "excludeReferences": false,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "hideGenerator": true,
+  "includeVersion": true,
+  "readme": "README.md",
+  "externalSymbolLinkMappings": {
+    "@minecraft/server": {
+      "CustomCommandOrigin": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandOrigin",
+      "CustomCommand": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommand",
+      "CommandPermissionLevel": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CommandPermissionLevel",
+      "CustomCommandParameter": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandParameter",
+      "CustomCommandParamType": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandParamType",
+      "CustomCommandResult": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandResult",
+      "world": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/world",
+      "system": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system",
+      "Player": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Player",
+      "Entity": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Entity"
+    }
+  }
+}
