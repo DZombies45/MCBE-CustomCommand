@@ -3,7 +3,7 @@
   "entryPoints": ["src"],
   "entryPointStrategy": "expand",
   "out": "docs",
-  "plugin": ["typedoc-plugin-include-example","typedoc-github-theme"],
+  "plugin": ["typedoc-plugin-include-example", "typedoc-github-theme"],
   "tsconfig": "./tsconfig.json",
   "excludeReferences": false,
   "excludePrivate": true,
@@ -19,11 +19,20 @@
       "CommandPermissionLevel": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CommandPermissionLevel",
       "CustomCommandParameter": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandParameter",
       "CustomCommandParamType": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandParamType",
+      "CustomCommandStatus": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandStatus",
       "CustomCommandResult": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandResult",
       "world": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/world",
       "system": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/system",
       "Player": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Player",
-      "Entity": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Entity"
+      "Entity": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Entity",
+      "Vector3": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/Vector3",
+      "number": "https://www.geeksforgeeks.org/javascript-numbers",
+      "string": "https://www.geeksforgeeks.org/javascript-string",
+      "boolean": "https://www.geeksforgeeks.org/javascript-boolean",
+      "any": "https://www.geeksforgeeks.org/what-is-any-type-and-when-to-use-it-in-typescript",
+      "unkown": "https://www.geeksforgeeks.org/what-is-an-unknown-type-and-when-to-use-it-in-typescript/",
+      "undefined": "https://www.geeksforgeeks.org/undefined-in-javascript/",
+      "Record": "https://www.geeksforgeeks.org/what-is-the-record-type-in-typescript/"
     }
   }
 }

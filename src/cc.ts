@@ -124,12 +124,48 @@ export const Is = {
   location: (arg: unknown): arg is Vector3 => {
     return typeof arg === "object" && "x" in arg && "y" in arg && "z" in arg;
   },
+  /**
+   * check is arg a number
+   *
+   * @param arg - the argument you want to check
+   * @return is it the thing or not
+   */
+  number: (arg: unknown): arg is number => {
+    return typeof arg === "number" && !isNaN(arg);
+  },
+  /**
+   * check is arg a float/decimal number
+   *
+   * @param arg - the argument you want to check
+   * @return is it the thing or not
+   */
+  float: (arg: unknown): arg is number => {
+    return typeof arg === "number" && !Number.isInteger(arg) && !isNaN(arg);
+  },
+  /**
+   * check is arg a integer/round number
+   *
+   * @param arg - the argument you want to check
+   * @return is it the thing or not
+   */
+  int: (arg: unknown): arg is number => {
+    return typeof arg === "number" && Number.isInteger(arg);
+  },
+  /**
+   * check is arg a boolean
+   *
+   * @param arg - the argument you want to check
+   * @return is it the thing or not
+   */
+  bool: (arg: unknown): arg is boolean => {
+    return typeof arg === "boolean";
+  },
 };
 
 /**
  * custom command creator.
  *
- * @includeExample example/tp.ts
+ * @includeExample example/tp.ts:9-31
  * */
 export class CMD {
   /** command object. */

@@ -1,10 +1,12 @@
 # Minecraft Custom Command System
+
 ```
 (this api is still on preview/beta version of minecraft)
 ```
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9%2B-blue)](https://www.typescriptlang.org/)
 [![Minecraft](https://img.shields.io/badge/Minecraft-Bedrock_1.21%2B-green)](https://www.minecraft.net/)
+[![GHPages](https://img.shields.io/badge/GitHub-Pages%2B-yelow)](https://dzombies45.github.io/MCBE-CustomCommand/)
 
 A modular command system for Minecraft Bedrock Script API with full TypeScript support.
 
@@ -19,16 +21,16 @@ A modular command system for Minecraft Bedrock Script API with full TypeScript s
 ## Complete Examples
 
 See full implementations in:  
-📁 [examples/tp.ts](./example/tp.ts)  
-📁 [examples/advanced.ts](./example/advanced.ts)
+📁 [examples/tp.ts](./example/tp.ts)
 
 ## Configuration
 
-Modify `config.ts`:
+Modify `config.ts/config.js`:
+
 ```typescript
 export const CONFIG = {
-  prefix: 'mynamespase',
-  files: ["myfile1","myfile2"],
+  prefix: "mynamespase",
+  files: ["myfile1", "myfile2"],
 };
 ```
 
@@ -37,18 +39,23 @@ export const CONFIG = {
 ### Git Clone
 
 1. Clone repository:
+
 ```bash
-git clone https://github.com/your-repo/minecraft-commands.git
+git clone https://github.com/DZombies45/MCBE-CustomCommand.git
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 ### Zip
+
 ```
-just download its zip from copy>download zip, then move config and cc to your project
+just download its zip from code(top right, the green one),
+download zip,
+then move config and cc to your project
 ```
 
 ## Contributing
@@ -63,11 +70,9 @@ Pull requests are welcome. For major changes, please open an issue first.
 
 ## Minimalist Version (Alternative)
 
-
 # Minecraft Command System
 
 TypeScript library for creating custom commands in Minecraft Bedrock.
 
-
-📚 [Full Documentation](./DOCS.md)  
-🛠 [Code Examples](./examples)  
+📚 [Full Documentation](https://dzombies45.github.io/MCBE-CustomCommand/modules.html)
+🛠 [Code Examples](https://github.com/DZombies45/MCBE-CustomCommand/tree/main/example)

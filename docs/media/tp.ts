@@ -28,4 +28,4 @@ const command = new CMD()
     target.teleport(args["location"]);
 
     return ResultStatus.success();
-  });
+  }).register()
