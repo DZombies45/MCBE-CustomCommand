@@ -11,7 +11,7 @@
   "excludeInternal": true,
   "hideGenerator": true,
   "includeVersion": true,
-  "readme": "README.md",
+  "readme": "page-home.md",
   "externalSymbolLinkMappings": {
     "@minecraft/server": {
       "CustomCommandOrigin": "https://learn.microsoft.com/en-us/minecraft/creator/scriptapi/minecraft/server/CustomCommandOrigin",
