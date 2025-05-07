@@ -462,7 +462,7 @@ export class CMD {
    * convert raw data from the api into an object, that is the same to your arguments, for easy read, then pass it to your function to run it
    * don't use this function
    */
-  run(source, ...args) {
+  run = (source, ...args) => {
     let arg = this.getParamenters();
     const namedArgs = arg.reduce((obj, config, index) => {
       obj[config.name] = args[index] || undefined;
@@ -470,7 +470,7 @@ export class CMD {
     }, {});
     // Panggil bcd dengan format yang diinginkan
     return this.#func({ source, args: namedArgs });
-  }
+  };
   /**
    * do this at the end to register it.
    */
