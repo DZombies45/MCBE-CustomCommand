@@ -51,9 +51,9 @@ export type ccArg = { source: CustomCommandOrigin; args: Record<string, any> };
  * };
  * ```
  * @param eventData - custom command data.
- * @returns Command result or undefined.
+ * @returns Command result
  */
-export type cmdFuncOut = (eventData: ccArg) => CustomCommandResult | undefined;
+export type cmdFuncOut = (eventData: ccArg) => CustomCommandResult;
 
 /**
  * custom command parameters.
@@ -66,7 +66,8 @@ export type cmdParam = CustomCommandParameter[];
  * @example
  * ```ts
  * // at the end or on return at CMD.setFunction
- * return ResultStatus.success()
+ *   return ResultStatus.success()
+ * }
  * ````
  */
 export const ResultStatus = {
@@ -91,8 +92,19 @@ export const ResultStatus = {
 };
 /**
  * register custom enum for custom command paramenters
+ * and the name need tb be the same
  *
- * @param name the name of this enum
+ * @example
+ * ```ts
+ * // cc is CMD
+ * RegisterEnum("mc:dimension", [ "overworld", "nether", "the_end" ])
+ *
+ * // namespace and name need to be the same for it to work
+ * cc.addEnumType("mc:dimension",true)
+ * // the return of this on function is type string
+ * ```
+ *
+ * @param name the name of this enum, you need to add namespace to this to work
  * @param value the enum you waht to add
  */
 export const RegisterEnum = (name: string, value: string[]): void => {
@@ -106,6 +118,7 @@ export const RegisterEnum = (name: string, value: string[]): void => {
  * ```ts
  * // on CMD.setFunction
  * if(Is.player(data.args["target"])) data.args["target"].sendMessage("YEY...")
+ * // this check that data.args["target"] is type Player
  * ````
  */
 export const Is = {
@@ -115,7 +128,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  player: (arg: unknown): arg is Player => {
+  Player: (arg: unknown): arg is Player => {
     return arg instanceof Player;
   },
   /**
@@ -124,16 +137,16 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  entity: (arg: unknown): arg is Entity => {
+  Entity: (arg: unknown): arg is Entity => {
     return arg instanceof Entity;
   },
   /**
-   * check is arg a text
+   * check is arg a string
    *
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  text: (arg: unknown): arg is string => {
+  String: (arg: unknown): arg is string => {
     return typeof arg === "string";
   },
   /**
@@ -142,7 +155,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  location: (arg: unknown): arg is Vector3 => {
+  Location: (arg: unknown): arg is Vector3 => {
     return typeof arg === "object" && "x" in arg && "y" in arg && "z" in arg;
   },
   /**
@@ -151,7 +164,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  number: (arg: unknown): arg is number => {
+  Number: (arg: unknown): arg is number => {
     return typeof arg === "number" && !isNaN(arg);
   },
   /**
@@ -160,7 +173,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  float: (arg: unknown): arg is number => {
+  Float: (arg: unknown): arg is number => {
     return typeof arg === "number" && !Number.isInteger(arg) && !isNaN(arg);
   },
   /**
@@ -169,7 +182,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  int: (arg: unknown): arg is number => {
+  Int: (arg: unknown): arg is number => {
     return typeof arg === "number" && Number.isInteger(arg);
   },
   /**
@@ -178,7 +191,7 @@ export const Is = {
    * @param arg - the argument you want to check
    * @return is it the thing or not
    */
-  bool: (arg: unknown): arg is boolean => {
+  Bool: (arg: unknown): arg is boolean => {
     return typeof arg === "boolean";
   },
 };
@@ -427,13 +440,13 @@ export class CMD {
     return this;
   }
   /**
-   * add argument type enim.
+   * add argument type enum from {@link RegisterEnum}
    *
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
    */
-  addEnumType(name: string, require: boolean = true): CMD {
+  addEnum(name: string, require: boolean = true): CMD {
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -534,6 +547,10 @@ export class CMD {
   register(): void {
     ccList.push(this);
   }
+}
+
+for (const file of CONFIG.files) {
+  import(`script/${file}`);
 }
 system.beforeEvents.startup.subscribe((data) => {
   for (const cEnum of ccEnum) {

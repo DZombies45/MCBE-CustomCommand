@@ -15,7 +15,7 @@ const command = new CMD()
       source.sourceEntity?.typeId !== "minecraft:player"
     )
       return ResultStatus.failure();
-    if (!Is.player(args["player"]))
+    if (!Is.Player(args["player"]))
       return ResultStatus.failure("arg player need to be a player entity");
     if (!args["location"]) return ResultStatus.failure("need to be location");
 

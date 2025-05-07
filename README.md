@@ -1,7 +1,7 @@
 # Minecraft Custom Command System
 
-```
-(this api is still on preview/beta version of minecraft)
+```text
+(this api using minecraft 1.21.80 stable of 2.0.0-beta api)
 ```
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9%2B-blue)](https://www.typescriptlang.org/)
@@ -56,7 +56,7 @@ npm install
 
 ### Zip
 
-```
+```text
 - just download its zip from code(top right, the green one),
 - download zip,
 - then move config and cc to your project
@@ -71,8 +71,6 @@ Pull requests are welcome. For major changes, please open an issue first.
 [MIT](https://github.com/DZombies45/MCBE-CustomCommand/blob/main/LICENSE) © 2023 Dzombies45
 
 ---
-
-## Minimalist Version (Alternative)
 
 # Minecraft Command System
 
