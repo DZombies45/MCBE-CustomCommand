@@ -26,6 +26,12 @@ import { CONFIG } from "./config";
  */
 const ccList: CMD[] = [];
 
+type ccenum = {
+  name: string;
+  value: string[];
+};
+const ccEnum: ccenum[] = [];
+
 /**
  * custom command argument that given to cmdFunction.
  *
@@ -82,6 +88,15 @@ export const ResultStatus = {
   failure: (message: string = ""): CustomCommandResult => {
     return { status: CustomCommandStatus.Failure, message };
   },
+};
+/**
+ * register custom enum for custom command paramenters
+ *
+ * @param name the name of this enum
+ * @param value the enum you waht to add
+ */
+export const RegisterEnum = (name: string, value: string[]): void => {
+  ccEnum.push({ name, value });
 };
 
 /**
@@ -411,6 +426,20 @@ export class CMD {
     arr.push({ name, type: CustomCommandParamType.ItemType });
     return this;
   }
+  /**
+   * add argument type enim.
+   *
+   * @param name - the name of this argument.
+   * @param [require=true] - is it required or not, required arguments listed first.
+   * @returns this
+   */
+  addEnumType(name: string, require: boolean = true): CMD {
+    const arr = require
+      ? this.#commandObj.mandatoryParameters
+      : this.#commandObj.optionalParameters;
+    arr.push({ name, type: CustomCommandParamType.Enum });
+    return this;
+  }
 
   /**
    * set this custom command's required arguments in batch
@@ -507,6 +536,9 @@ export class CMD {
   }
 }
 system.beforeEvents.startup.subscribe((data) => {
+  for (const cEnum of ccEnum) {
+    data.customCommandRegistry.registerEnum(cEnum.name, cEnum.value);
+  }
   for (const cmdObj of ccList) {
     data.customCommandRegistry.registerCommand(cmdObj.getCmd(), cmdObj.run);
   }

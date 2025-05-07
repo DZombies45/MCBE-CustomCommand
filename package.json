@@ -12,7 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@minecraft/server": "^2.1.0-beta.1.21.90-preview.20"
+    "@minecraft/server": "^2.0.0-beta.1.21.80-stable"
   },
   "devDependencies": {
     "typedoc": "^0.28.3",
