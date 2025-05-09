@@ -91,7 +91,7 @@ export const ResultStatus = {
   },
 };
 /**
- * register custom enum for custom command paramenters
+ * register custom enum for custom command parameters
  * and the name need tb be the same
  *
  * @example
@@ -241,7 +241,7 @@ export class CMD {
    * @returns this.
    */
   setName(a: string): CMD {
-    this.#commandObj.name = `${CONFIG.prefix}:${a}`;
+    this.#commandObj.name = a;
     return this;
   }
   /**
@@ -250,7 +250,7 @@ export class CMD {
    * @returns the name of this command.
    */
   getName(): string {
-    return this.#commandObj.name.replace(`${CONFIG.prefix}:`, "");
+    return this.#commandObj.name;
   }
 
   /**
@@ -312,8 +312,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addBoolean(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -327,8 +332,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addInteger(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -342,8 +352,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addFloat(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -357,8 +372,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addString(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -372,8 +392,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addEntitySelector(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -387,8 +412,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addPlayerSelector(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -402,8 +432,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addLocation(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -417,8 +452,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addBlockType(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -431,8 +471,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addItemType(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -445,8 +490,13 @@ export class CMD {
    * @param name - the name of this argument.
    * @param [require=true] - is it required or not, required arguments listed first.
    * @returns this
+   * @throws if its a required parameters, but added after optional parameters
    */
   addEnum(name: string, require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
     const arr = require
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
@@ -497,7 +547,7 @@ export class CMD {
    *
    * @returns array of required and optional arguments
    */
-  getParamenters(): cmdParam {
+  getParameters(): cmdParam {
     return [
       ...this.#commandObj.optionalParameters,
       ...this.#commandObj.mandatoryParameters,
@@ -528,7 +578,7 @@ export class CMD {
    * don't use this function
    */
   run = (source: CustomCommandOrigin, ...args: any[]) => {
-    let arg = this.getParamenters();
+    let arg = this.getParameters();
     const namedArgs = arg.reduce(
       (obj, config, index) => {
         obj[config.name] = args[index] || undefined;
@@ -542,9 +592,15 @@ export class CMD {
   };
 
   /**
-   * do this at the end to register it.
+   * do this at the end.
+   * verify the command and register it.
+   *
+   * @throws if the syntax is wrong
    */
   register(): void {
+    if (!this.#func) throw new Error("command need function to run");
+    if (this.#commandObj.name === "") throw new Error("command need a name");
+    this.#commandObj.name = `${CONFIG.prefix}:${this.#commandObj.name}`;
     ccList.push(this);
   }
 }
