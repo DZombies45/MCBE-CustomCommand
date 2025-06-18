@@ -182,7 +182,19 @@ export class CMD {
       permissionLevel: init.permissionLevel || CommandPermissionLevel.Any,
       mandatoryParameters: init.mandatoryParameters || [],
       optionalParameters: init.optionalParameters || [],
+      cheatsRequired: CONFIG.requireCheatDefault,
     };
+  }
+  /**
+   * is cheat need to be enable to use
+   * (default can be change in the config)
+   *
+   * @param a - required?
+   * @returns this
+   */
+  requireCheat(a) {
+    this.#commandObj.cheatsRequired = a;
+    return this;
   }
   /**
    * get this custom command object so can be use again
