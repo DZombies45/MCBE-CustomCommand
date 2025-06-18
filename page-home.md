@@ -12,14 +12,6 @@
 A modular custom command system for Minecraft Bedrock Script API with full TypeScript support.
 it use minecraft's own api, the [CustomCommandRegistry Class](https://learn.microsoft.com/id-id/minecraft/creator/scriptapi/minecraft/server/customcommandregistry?view=minecraft-bedrock-experimental&viewFallbackFrom=minecraft-bedrock-stable) to register the command
 
-## Key Features
-
-✅ **Type-safe command builder**  
-✅ **Parameter validation**  
-✅ **Multiple permission levels**  
-✅ **IDE auto-completion**  
-✅ **Extensible architecture**
-
 ## Complete Examples
 
 See full implementations in:  
@@ -39,7 +31,7 @@ export const CONFIG = {
 ## Development Setup
 
 - `js` is on [`out` folder](https://github.com/DZombies45/MCBE-CustomCommand/tree/main/out)
-- `ts` is on [`src` folter](https://github.com/DZombies45/MCBE-CustomCommand/tree/main/src)
+- `ts` is on [`src` folder](https://github.com/DZombies45/MCBE-CustomCommand/tree/main/src)
 
 ### Git Clone
 

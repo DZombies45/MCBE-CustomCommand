@@ -19,8 +19,10 @@ export const CONFIG: {
   prefix: string;
   requireCheatDefault: boolean;
   files: string[];
+  runOnReadOnly: boolean;
 } = {
   prefix: "mynamespace",
   requireCheatDefault: false,
   files: [],
+  runOnReadOnly: true,
 } as const;

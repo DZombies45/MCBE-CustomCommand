@@ -5,6 +5,7 @@ import {
   CustomCommandStatus,
   Player,
   Entity,
+  world,
 } from "@minecraft/server";
 import { CONFIG } from "./config";
 /**
@@ -164,6 +165,7 @@ export class CMD {
   #commandObj;
   /** command function. */
   #func;
+  #runOnReadOnly = CONFIG.runOnReadOnly || true;
   /**
    * create new instance of custom command creator.
    *
@@ -534,8 +536,29 @@ export class CMD {
     return this.#func;
   }
   /**
+   * set is command run on read only mode
+   * (default can be change at config)
+   *
+   * @param is this command run on readOnly?
+   * @returns this
+   */
+  setRunMode(readOnly) {
+    this.#runOnReadOnly = readOnly;
+    return this;
+  }
+  /**
+   * get the command run mode
+   *
+   * @returns true = readOnly, false = next tick
+   */
+  getRunMode() {
+    return this.#runOnReadOnly;
+  }
+  /**
    * convert raw data from the api into an object, that is the same to your arguments, for easy read, then pass it to your function to run it
-   * don't use this function
+   *
+   * @remarks
+   * ## ⚠️ don't use this functionn
    */
   run = (source, ...args) => {
     let arg = this.getParameters();
@@ -544,7 +567,24 @@ export class CMD {
       return obj;
     }, {});
     // Panggil bcd dengan format yang diinginkan
-    return this.#func({ source, args: namedArgs });
+    if (this.#runOnReadOnly) return this.#func({ source, args: namedArgs });
+    else {
+      system.run(() => {
+        const hasil = this.#func({ source, args: namedArgs });
+        if (!hasil.status || !hasil.message) return;
+        world
+          .getPlayers()
+          .filter(
+            (p) => p.commandPermissionLevel >= CommandPermissionLevel.Admin,
+          )
+          .forEach((p) =>
+            p.sendMessage(
+              `${hasil.status === CustomCommandStatus.Success ? "§a" : "§c"}${hasil.message}`,
+            ),
+          );
+      });
+      return ResultStatus.success();
+    }
   };
   /**
    * do this at the end.

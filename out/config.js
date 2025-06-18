@@ -19,4 +19,5 @@ export const CONFIG = {
   prefix: "mynamespace",
   requireCheatDefault: false,
   files: [],
+  runOnReadOnly: true,
 };
