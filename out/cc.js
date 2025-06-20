@@ -1,3 +1,6 @@
+// made by Dzombies45
+// github project for this custom command:
+// https://github.com/DZombies45/MCBE-CustomCommand
 import {
   system,
   CustomCommandParamType,
@@ -6,6 +9,7 @@ import {
   Player,
   Entity,
   world,
+  CustomCommandSource,
 } from "@minecraft/server";
 import { CONFIG } from "./config";
 /**
@@ -165,7 +169,6 @@ export class CMD {
   #commandObj;
   /** command function. */
   #func;
-  #runOnReadOnly = CONFIG.runOnReadOnly || true;
   /**
    * create new instance of custom command creator.
    *
@@ -536,25 +539,7 @@ export class CMD {
     return this.#func;
   }
   /**
-   * set is command run on read only mode
-   * (default can be change at config)
    *
-   * @param is this command run on readOnly?
-   * @returns this
-   */
-  setRunMode(readOnly) {
-    this.#runOnReadOnly = readOnly;
-    return this;
-  }
-  /**
-   * get the command run mode
-   *
-   * @returns true = readOnly, false = next tick
-   */
-  getRunMode() {
-    return this.#runOnReadOnly;
-  }
-  /**
    * convert raw data from the api into an object, that is the same to your arguments, for easy read, then pass it to your function to run it
    *
    * @remarks
@@ -567,24 +552,27 @@ export class CMD {
       return obj;
     }, {});
     // Panggil bcd dengan format yang diinginkan
-    if (this.#runOnReadOnly) return this.#func({ source, args: namedArgs });
-    else {
-      system.run(() => {
-        const hasil = this.#func({ source, args: namedArgs });
-        if (!hasil.status || !hasil.message) return;
+    system.run(async () => {
+      const hasil = await this.#func({ source, args: namedArgs });
+      if (!hasil || !hasil?.message) return;
+      const warna = hasil.status === CustomCommandStatus.Success ? "§a" : "§c";
+      if (source.sourceEntity instanceof Player)
+        source.sourceEntity.sendMessage(`${warna}${hasil.message}`);
+      if (source.initiator instanceof Player)
+        source.initiator.sendMessage(`${warna}${hasil.message}`);
+      if (
+        [CustomCommandSource.Server, CustomCommandSource.Block].includes(
+          source.sourceType,
+        )
+      )
         world
           .getPlayers()
           .filter(
-            (p) => p.commandPermissionLevel >= CommandPermissionLevel.Admin,
+            (p) => p.commandPermissionLevel >= this.#commandObj.permissionLevel,
           )
-          .forEach((p) =>
-            p.sendMessage(
-              `${hasil.status === CustomCommandStatus.Success ? "§a" : "§c"}${hasil.message}`,
-            ),
-          );
-      });
-      return ResultStatus.success();
-    }
+          .forEach((p) => p.sendMessage(`${warna}${hasil.message}`));
+    });
+    return ResultStatus.success();
   };
   /**
    * do this at the end.
@@ -596,6 +584,8 @@ export class CMD {
     if (!this.#func) throw new Error("command need function to run");
     if (this.#commandObj.name === "") throw new Error("command need a name");
     this.#commandObj.name = `${CONFIG.prefix}:${this.#commandObj.name}`;
+    if (CONFIG.logRegister)
+      console.log(`[CMD]§a registered command ${this.#commandObj.name}`);
     ccList.push(this);
   }
 }
