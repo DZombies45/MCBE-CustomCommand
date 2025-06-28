@@ -20,4 +20,7 @@ export const CONFIG = {
   requireCheatDefault: false,
   files: [],
   logRegister: true,
+  helpAuto: false,
+  helpCommand: "helpcmd",
+  helpDescription: "show all command from this",
 };

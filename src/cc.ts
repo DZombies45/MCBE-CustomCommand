@@ -81,26 +81,27 @@ export type cmdParam = CustomCommandParameter[];
  * }
  * ````
  */
-export const ResultStatus = {
+export class ResultStatus {
   /**
    * return a success massage to minecraft command
    *
    * @param [message=""] - the message to give after running the command
    * @returns an {@link CustomCommandResult} status of success
    */
-  success: (message: string = ""): CustomCommandResult => {
+  static success(message: string = ""): CustomCommandResult {
     return { status: CustomCommandStatus.Success, message };
-  },
+  }
   /**
    * return a failure massage to minecraft command
    *
    * @param [message=""] - the message to give after running the command
    * @returns an {@link CustomCommandResult} status of failure
    */
-  failure: (message: string = ""): CustomCommandResult => {
+  static failure(message: string = ""): CustomCommandResult {
     return { status: CustomCommandStatus.Failure, message };
-  },
+  }
 };
+
 /**
  * register custom enum for custom command parameters
  * and the name need tb be the same
@@ -128,84 +129,67 @@ export const RegisterEnum = (name: string, value: string[]): void => {
  * @example
  * ```ts
  * // on CMD.setFunction
- * if(Is.player(data.args["target"])) data.args["target"].sendMessage("YEY...")
+ * if(Is.Player(data.args["target"])) data.args["target"].sendMessage("YEY...")
  * // this check that data.args["target"] is type Player
  * ````
  */
-export const Is = {
+export class Is {
   /**
    * check is arg a player
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Player: (arg: unknown): arg is Player => {
+  static Player(arg: unknown): arg is Player {
     return arg instanceof Player;
-  },
+  }
+
   /**
    * check is arg an entity
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Entity: (arg: unknown): arg is Entity => {
+  static Entity(arg: unknown): arg is Entity {
     return arg instanceof Entity;
-  },
+  }
+
   /**
    * check is arg a string
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  String: (arg: unknown): arg is string => {
+  static String(arg: unknown): arg is string {
     return typeof arg === "string";
-  },
+  }
+
   /**
    * check is arg a Vector3/location
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Location: (arg: unknown): arg is Vector3 => {
-    return typeof arg === "object" && "x" in arg && "y" in arg && "z" in arg;
-  },
+  static Location(arg: unknown): arg is Vector3 {
+    return typeof arg === "object" && arg !== null && "x" in arg && "y" in arg && "z" in arg;
+  }
+
   /**
    * check is arg a number
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Number: (arg: unknown): arg is number => {
+  static Number(arg: unknown): arg is number {
     return typeof arg === "number" && !isNaN(arg);
-  },
+  }
+
   /**
    * check is arg a float/decimal number
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Float: (arg: unknown): arg is number => {
+  static Float(arg: unknown): arg is number {
     return typeof arg === "number" && !Number.isInteger(arg) && !isNaN(arg);
-  },
+  }
+
   /**
-   * check is arg a integer/round number
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
+   * check is arg an integer/round number
    */
-  Int: (arg: unknown): arg is number => {
+  static Int(arg: unknown): arg is number {
     return typeof arg === "number" && Number.isInteger(arg);
-  },
+  }
+
   /**
    * check is arg a boolean
-   *
-   * @param arg - the argument you want to check
-   * @return is it the thing or not
    */
-  Bool: (arg: unknown): arg is boolean => {
+  static Bool(arg: unknown): arg is boolean {
     return typeof arg === "boolean";
-  },
-};
+  }
+}
 
 /**
  * custom command creator.
@@ -217,6 +201,7 @@ export class CMD {
   #commandObj: CustomCommand;
   /** command function. */
   #func: cmdFuncOut;
+  #option: { tag?: string[]; type: "all" | "any" };
   /**
    * create new instance of custom command creator.
    *
@@ -230,13 +215,37 @@ export class CMD {
     },
   ) {
     this.#commandObj = {
-      name: init.name || "",
-      description: init.description || "",
-      permissionLevel: init.permissionLevel || CommandPermissionLevel.Any,
-      mandatoryParameters: init.mandatoryParameters || [],
-      optionalParameters: init.optionalParameters || [],
+      name: init?.name || "",
+      description: init?.description || "",
+      permissionLevel: init?.permissionLevel || CommandPermissionLevel.Any,
+      mandatoryParameters: init?.mandatoryParameters || [],
+      optionalParameters: init?.optionalParameters || [],
       cheatsRequired: CONFIG.requireCheatDefault,
     };
+    this.#option.type = "any";
+  }
+
+  /**
+   * create new instance of custom command creator.
+   *
+   * @param name name of the command
+   */
+  static create(name: string): CMD {
+    return new CMD({
+      name,
+      description: "",
+      permissionLevel: CommandPermissionLevel.Any,
+    });
+  }
+
+  /**
+   * set tab that required when running this command
+   *
+   */
+  setTagRank(tags: string[], anyOrAll: "any" | "all" = "any"): CMD {
+    this.#option.tag = tags;
+    this.#option.type = anyOrAll;
+    return this;
   }
 
   /**
@@ -324,8 +333,7 @@ export class CMD {
       case CommandPermissionLevel.Owner:
         return "Owner";
       default:
-        return "Any";
-        break;
+        return "Unknown";
     }
   }
 
@@ -589,7 +597,7 @@ export class CMD {
     return this;
   }
   /**
-   * get this commane function.
+   * get this command function.
    *
    * @returns function.
    */
@@ -614,8 +622,24 @@ export class CMD {
       {} as Record<string, any>,
     );
 
-    // Panggil bcd dengan format yang diinginkan
+    // check tag on entity
+    const entity =
+      source.sourceType === CustomCommandSource.Entity
+        ? source.sourceEntity
+        : source.initiator;
+    const tag = entity?.getTags() || [];
+    let tagReq = true;
 
+    if (this.#option.tag && this.#option.tag?.length > 0)
+      if (this.#option.type === "all")
+        tagReq = this.#option.tag.every((item) => tag.includes(item));
+      else if (this.#option.tag.length > 0)
+        tagReq = this.#option.tag.some((item) => tag.includes(item));
+
+    if (!tagReq)
+      return ResultStatus.failure("Tag permission not meet the requirement");
+
+    // Panggil bcd dengan format yang diinginkan
     system.run(async () => {
       const hasil = await this.#func({ source, args: namedArgs });
       if (!hasil || !hasil?.message) return;
@@ -655,9 +679,12 @@ export class CMD {
   }
 }
 
+// load file
 for (const file of CONFIG.files) {
   import(`script/${file}`);
 }
+
+// register command
 system.beforeEvents.startup.subscribe((data) => {
   for (const cEnum of ccEnum) {
     data.customCommandRegistry.registerEnum(cEnum.name, cEnum.value);
@@ -666,3 +693,85 @@ system.beforeEvents.startup.subscribe((data) => {
     data.customCommandRegistry.registerCommand(cmdObj.getCmd(), cmdObj.run);
   }
 });
+
+function helpCmd() {
+  new CMD()
+    .setName(`${CONFIG.helpCommand || "helpcmd"}`)
+    .setDescription(`${CONFIG.helpDescription || "show all command from this"}`)
+    .addString("page_or_cmd", false)
+    .setPermision(CommandPermissionLevel.Any)
+    .setFunction((event) => {
+      if (
+        event.source.sourceType !== CustomCommandSource.Entity ||
+        !Is.Player(event.source.sourceEntity)
+      )
+        return ResultStatus.failure("only player can use this");
+
+      const player = event.source.sourceEntity;
+      const argument = event.args["page_or_cmd"];
+      let page = 1;
+
+      function getNameOnly(_name: string): string {
+        return _name.split(":")[1];
+      }
+
+      if (argument && Is.String(argument)) {
+        if (/^\d+$/.test(argument.trim())) page = parseInt(argument.trim());
+        else {
+          const foundIt = ccList.find(
+            (cmdObj) =>
+              cmdObj.getName() === argument ||
+              getNameOnly(cmdObj.getName()) === argument,
+          );
+          if (!foundIt)
+            return ResultStatus.failure(`command ${argument} not found`);
+
+          const cmd = foundIt.getCmd();
+          player.sendMessage(`§e${cmd.name} (or ${getNameOnly(cmd.name)} ):`);
+          player.sendMessage(`§e${cmd.description},`);
+          player.sendMessage("Usege:");
+          player.sendMessage(`- ${cmdFormatnya(foundIt)}`);
+          return ResultStatus.success();
+        }
+      }
+
+      player.sendMessage(
+        `---- ${CONFIG.prefix} ${CONFIG.helpCommand || "helpCmd"} page ${page} of ${Math.ceil(ccList.length / 10)} ----`,
+      );
+      for (const cmdObj of paginateArray(ccList, 10, page)) {
+        player.sendMessage(cmdFormatnya(cmdObj));
+      }
+
+      return ResultStatus.success();
+    });
+}
+function paginateArray<T>(
+  array: T[],
+  pageSize: number,
+  pageNumber: number,
+): T[] {
+  const startIndex = (pageNumber - 1) * pageSize;
+  return array.slice(startIndex, startIndex + pageSize);
+}
+
+function cmdFormatnya(cmd: CMD): string {
+  let cmdArr = [];
+  const _cmd = cmd.getCmd();
+  cmdArr.push(`${_cmd.name}`);
+  if (_cmd.mandatoryParameters.length > 0)
+    cmdArr.push(...getParam(_cmd.mandatoryParameters));
+  if (_cmd.optionalParameters.length > 0)
+    cmdArr.push(...getParam(_cmd.optionalParameters));
+  return cmdArr.join(" ");
+}
+
+function getParam(param: CustomCommandParameter[]): string[] {
+  let cmdArr = [];
+  for (const req of param) {
+    let type = ccEnum.find((v) => v.name === req.name)?.value?.join("; ");
+    if (!type || req.type !== CustomCommandParamType.Enum)
+      type = req.type.replace(/(?!^)([A-Z])/g, " $1") || "unknown";
+    cmdArr.push(`<${req.name}: ${type}>`);
+  }
+  return cmdArr;
+}

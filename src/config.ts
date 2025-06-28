@@ -20,9 +20,15 @@ export const CONFIG: {
   requireCheatDefault: boolean;
   files: string[];
   logRegister: boolean;
+  helpAuto: boolean;
+  helpCommand: string;
+  helpDescription: string;
 } = {
   prefix: "mynamespace",
   requireCheatDefault: false,
   files: [],
   logRegister: true,
+  helpAuto: false,
+  helpCommand: "helpcmd",
+  helpDescription: "show all command from this",
 } as const;
