@@ -613,6 +613,7 @@ for (const file of CONFIG.files) {
 }
 // register command
 system.beforeEvents.startup.subscribe((data) => {
+  if (CONFIG.helpAuto) helpCmd();
   for (const cEnum of ccEnum) {
     data.customCommandRegistry.registerEnum(cEnum.name, cEnum.value);
   }
@@ -620,7 +621,7 @@ system.beforeEvents.startup.subscribe((data) => {
     data.customCommandRegistry.registerCommand(cmdObj.getCmd(), cmdObj.run);
   }
 });
-function helpCmd() {
+export function helpCmd() {
   new CMD()
     .setName(`${CONFIG.helpCommand || "helpcmd"}`)
     .setDescription(`${CONFIG.helpDescription || "show all command from this"}`)
