@@ -100,7 +100,7 @@ export class ResultStatus {
   static failure(message: string = ""): CustomCommandResult {
     return { status: CustomCommandStatus.Failure, message };
   }
-};
+}
 
 /**
  * register custom enum for custom command parameters
@@ -159,7 +159,13 @@ export class Is {
    * check is arg a Vector3/location
    */
   static Location(arg: unknown): arg is Vector3 {
-    return typeof arg === "object" && arg !== null && "x" in arg && "y" in arg && "z" in arg;
+    return (
+      typeof arg === "object" &&
+      arg !== null &&
+      "x" in arg &&
+      "y" in arg &&
+      "z" in arg
+    );
   }
 
   /**
@@ -686,6 +692,7 @@ for (const file of CONFIG.files) {
 
 // register command
 system.beforeEvents.startup.subscribe((data) => {
+  if (CONFIG.helpAuto) helpCmd();
   for (const cEnum of ccEnum) {
     data.customCommandRegistry.registerEnum(cEnum.name, cEnum.value);
   }
@@ -694,7 +701,7 @@ system.beforeEvents.startup.subscribe((data) => {
   }
 });
 
-function helpCmd() {
+export function helpCmd() {
   new CMD()
     .setName(`${CONFIG.helpCommand || "helpcmd"}`)
     .setDescription(`${CONFIG.helpDescription || "show all command from this"}`)
