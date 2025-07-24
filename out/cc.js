@@ -152,6 +152,7 @@ export class CMD {
   /** command function. */
   #func;
   #option;
+  #alias;
   /**
    * create new instance of custom command creator.
    *
@@ -173,6 +174,7 @@ export class CMD {
       cheatsRequired: CONFIG.requireCheatDefault,
     };
     this.#option.type = "any";
+    this.#alias = [];
   }
   /**
    * create new instance of custom command creator.
@@ -229,6 +231,34 @@ export class CMD {
    */
   getName() {
     return this.#commandObj.name;
+  }
+  /**
+   * set this command name alias.
+   *
+   * @param a - name array.
+   * @returns this.
+   */
+  setAlias(a) {
+    this.#alias = a;
+    return this;
+  }
+  /**
+   * add this command a name alias
+   *
+   * @param a - name
+   * @returns this
+   */
+  addAlias(a) {
+    this.#alias = [...this.#alias, a];
+    return this;
+  }
+  /**
+   * get this command name alias.
+   *
+   * @returns the name of this command.
+   */
+  getAlias() {
+    return this.#alias;
   }
   /**
    * set this command description.
@@ -613,12 +643,23 @@ for (const file of CONFIG.files) {
 }
 // register command
 system.beforeEvents.startup.subscribe((data) => {
+  // create help cmd if auto is true
   if (CONFIG.helpAuto) helpCmd();
+  // register enum
   for (const cEnum of ccEnum) {
     data.customCommandRegistry.registerEnum(cEnum.name, cEnum.value);
   }
+  // register command
   for (const cmdObj of ccList) {
     data.customCommandRegistry.registerCommand(cmdObj.getCmd(), cmdObj.run);
+  }
+  // register command alias
+  for (const cmdObj of ccList) {
+    const temp = cmdObj.getCmd();
+    for (const alias of cmdObj.getAlias()) {
+      temp.name = `${CONFIG.prefix}:${alias}`;
+      data.customCommandRegistry.registerCommand(temp, cmdObj.run);
+    }
   }
 });
 export function helpCmd() {
@@ -645,12 +686,16 @@ export function helpCmd() {
           const foundIt = ccList.find(
             (cmdObj) =>
               cmdObj.getName() === argument ||
-              getNameOnly(cmdObj.getName()) === argument,
+              getNameOnly(cmdObj.getName()) === argument ||
+              cmdObj.getAlias().includes(argument),
           );
           if (!foundIt)
             return ResultStatus.failure(`command ${argument} not found`);
+          const alias = foundIt.getAlias();
           const cmd = foundIt.getCmd();
-          player.sendMessage(`§e${cmd.name} (or ${getNameOnly(cmd.name)} ):`);
+          player.sendMessage(
+            `§e${cmd.name} (or ${getNameOnly(cmd.name)}${alias.length > 0 ? "|" + alias.join("|") : ""} ):`,
+          );
           player.sendMessage(`§e${cmd.description},`);
           player.sendMessage("Usege:");
           player.sendMessage(`- ${cmdFormatnya(foundIt)}`);
