@@ -207,8 +207,8 @@ export class CMD {
   #commandObj: CustomCommand;
   /** command function. */
   #func: cmdFuncOut;
-  #option: { tag?: string[]; type: "all" | "any" };
-  #alias: string[];
+  #option: { tag?: string[]; type: "all" | "any" } = { type: "any" };
+  #alias: string[] = [];
   /**
    * create new instance of custom command creator.
    *
@@ -229,8 +229,6 @@ export class CMD {
       optionalParameters: init?.optionalParameters || [],
       cheatsRequired: CONFIG.requireCheatDefault,
     };
-    this.#option.type = "any";
-    this.#alias = [];
   }
 
   /**

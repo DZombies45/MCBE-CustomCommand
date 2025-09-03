@@ -151,8 +151,8 @@ export class CMD {
   #commandObj;
   /** command function. */
   #func;
-  #option;
-  #alias;
+  #option = { type: "any" };
+  #alias = [];
   /**
    * create new instance of custom command creator.
    *
@@ -173,8 +173,6 @@ export class CMD {
       optionalParameters: init?.optionalParameters || [],
       cheatsRequired: CONFIG.requireCheatDefault,
     };
-    this.#option.type = "any";
-    this.#alias = [];
   }
   /**
    * create new instance of custom command creator.
