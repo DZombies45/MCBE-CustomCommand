@@ -132,32 +132,46 @@ export const RegisterEnum = (name: string, value: string[]): void => {
  * if(Is.Player(data.args["target"])) data.args["target"].sendMessage("YEY...")
  * // this check that data.args["target"] is type Player
  * ````
+ *//**
+ * Utility untuk type checking yang kuat dan clean
  */
 export class Is {
-  /**
-   * check is arg a player
-   */
+  /** check is arg a Player */
   static Player(arg: unknown): arg is Player {
     return arg instanceof Player;
   }
 
-  /**
-   * check is arg an entity
-   */
+  /** check is arg an Entity */
   static Entity(arg: unknown): arg is Entity {
     return arg instanceof Entity;
   }
 
-  /**
-   * check is arg a string
-   */
+  /** check is arg a string */
   static String(arg: unknown): arg is string {
     return typeof arg === "string";
   }
 
-  /**
-   * check is arg a Vector3/location
-   */
+  /** check is arg a number (bukan NaN) */
+  static Number(arg: unknown): arg is number {
+    return typeof arg === "number" && !Number.isNaN(arg);
+  }
+
+  /** check is arg a integer */
+  static Int(arg: unknown): arg is number {
+    return this.Number(arg) && Number.isInteger(arg);
+  }
+
+  /** check is arg a float/decimal */
+  static Float(arg: unknown): arg is number {
+    return this.Number(arg) && !Number.isInteger(arg);
+  }
+
+  /** check is arg a boolean */
+  static Bool(arg: unknown): arg is boolean {
+    return typeof arg === "boolean";
+  }
+
+  /** check is arg a Vector3 or Location */
   static Location(arg: unknown): arg is Vector3 {
     return (
       typeof arg === "object" &&
@@ -166,34 +180,6 @@ export class Is {
       "y" in arg &&
       "z" in arg
     );
-  }
-
-  /**
-   * check is arg a number
-   */
-  static Number(arg: unknown): arg is number {
-    return typeof arg === "number" && !isNaN(arg);
-  }
-
-  /**
-   * check is arg a float/decimal number
-   */
-  static Float(arg: unknown): arg is number {
-    return typeof arg === "number" && !Number.isInteger(arg) && !isNaN(arg);
-  }
-
-  /**
-   * check is arg an integer/round number
-   */
-  static Int(arg: unknown): arg is number {
-    return typeof arg === "number" && Number.isInteger(arg);
-  }
-
-  /**
-   * check is arg a boolean
-   */
-  static Bool(arg: unknown): arg is boolean {
-    return typeof arg === "boolean";
   }
 }
 
@@ -568,6 +554,28 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.Enum });
+    return this;
+  }
+  /**
+   * add argument type enum from {@link RegisterEnum} and register its enum
+   *
+   * @param name - the name of this argument( need to add namespace, or use default from config).
+   * @param value - the enum you want to add(if name already register at RegisterEnum, it will use that one insted).
+   * @param [require=true] - is it required or not, required arguments listed first.
+   * @returns this
+   * @throws if its a required parameters, but added after optional parameters
+   */
+  addEnumNew(name: string, value: string[], require: boolean = true): CMD {
+    if (require && this.#commandObj.optionalParameters.length > 0)
+      throw new Error(
+        "can't add required parameters after optional parameters",
+      );
+    const arr = require
+      ? this.#commandObj.mandatoryParameters
+      : this.#commandObj.optionalParameters;
+    const enumName = name.includes(":") ? name : CONFIG.prefix + name;
+    if (!ccEnum.find((v) => v.name === enumName)) RegisterEnum(enumName, value);
+    arr.push({ name: enumName, type: CustomCommandParamType.Enum });
     return this;
   }
 

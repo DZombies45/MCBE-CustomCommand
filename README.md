@@ -1,9 +1,5 @@
 # Minecraft Custom Command System
 
-```text
-(this api using minecraft 1.21.80 stable of 2.0.0-beta api)
-```
-
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9%2B-blue)](https://www.typescriptlang.org/)
 [![Minecraft](https://img.shields.io/badge/Minecraft-Bedrock_1.21%2B-green)](https://www.minecraft.net/)
 [![GH Pages](https://img.shields.io/badge/GitHub-Pages-yelow)](https://dzombies45.github.io/MCBE-CustomCommand/)
