@@ -476,31 +476,12 @@ export class CMD {
    * add argument type enum from {@link RegisterEnum}
    *
    * @param name - the name of this argument.
-   * @param [require=true] - is it required or not, required arguments listed first.
+   * @param [require=true] - is it required or not, required arguments listed first
+   * @param [value=[]] - the value of enum to add if enum is not registered.
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addEnum(name, require = true) {
-    if (require && this.#commandObj.optionalParameters.length > 0)
-      throw new Error(
-        "can't add required parameters after optional parameters",
-      );
-    const arr = require
-      ? this.#commandObj.mandatoryParameters
-      : this.#commandObj.optionalParameters;
-    arr.push({ name, type: CustomCommandParamType.Enum });
-    return this;
-  }
-  /**
-   * add argument type enum from {@link RegisterEnum} and register its enum
-   *
-   * @param name - the name of this argument( need to add namespace, or use default from config).
-   * @param value - the enum you want to add(if name already register at RegisterEnum, it will use that one insted).
-   * @param [require=true] - is it required or not, required arguments listed first.
-   * @returns this
-   * @throws if its a required parameters, but added after optional parameters
-   */
-  addEnumNew(name, value, require = true) {
+  addEnum(name, require = true, value = []) {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",

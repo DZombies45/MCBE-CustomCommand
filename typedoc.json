@@ -4,7 +4,6 @@
   "entryPointStrategy": "resolve",
   "out": "docs",
   "plugin": ["typedoc-plugin-include-example", "typedoc-github-theme"],
-  "tsconfig": "./tsconfig.json",
   "excludeReferences": false,
   "excludePrivate": true,
   "excludeProtected": true,
