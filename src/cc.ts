@@ -186,7 +186,7 @@ export class Is {
 /**
  * custom command creator.
  *
- * @includeExample src/example/tp.ts:4-27
+ * @includeExample src/example/tp.ts[4:27]
  * */
 export class CMD {
   /** command object. */

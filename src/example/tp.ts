@@ -1,7 +1,7 @@
 import { CommandPermissionLevel } from "@minecraft/server";
 import { CMD, Is, ResultStatus } from "../cc";
 
-const command = new CMD()
+new CMD()
   .setName("tp")
   .setDescription("tp player to coord")
   .setPermision(CommandPermissionLevel.Any)
