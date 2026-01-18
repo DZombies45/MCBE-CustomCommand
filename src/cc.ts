@@ -605,8 +605,8 @@ export class CMD {
    */
   getParameters(): cmdParam {
     return [
-      ...this.#commandObj.optionalParameters,
       ...this.#commandObj.mandatoryParameters,
+      ...this.#commandObj.optionalParameters,
     ];
   }
 
@@ -701,11 +701,6 @@ export class CMD {
       console.log(`[CMD]§a registered command ${this.#commandObj.name}`);
     ccList.push(this);
   }
-}
-
-// load file
-for (const file of CONFIG.files) {
-  import(`script/${file}`);
 }
 
 // register command

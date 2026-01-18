@@ -18,7 +18,6 @@
 export const CONFIG: {
   prefix: string;
   requireCheatDefault: boolean;
-  files: string[];
   logRegister: boolean;
   helpAuto: boolean;
   helpCommand: string;
@@ -26,7 +25,6 @@ export const CONFIG: {
 } = {
   prefix: "mynamespace",
   requireCheatDefault: false,
-  files: [],
   logRegister: true,
   helpAuto: false,
   helpCommand: "helpcmd",
