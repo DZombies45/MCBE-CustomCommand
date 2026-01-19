@@ -44,7 +44,7 @@ const ccEnum: ccenum[] = [];
  * @property source - the one running the command.
  * @property args - the arguments.
  * */
-export type ccArg = { source: CustomCommandOrigin; args: Record<string, any> };
+export type ccArg<T> = { source: CustomCommandOrigin; args: T };
 
 /**
  * represents a command function that can be executed.
@@ -59,13 +59,19 @@ export type ccArg = { source: CustomCommandOrigin; args: Record<string, any> };
  * @param eventData - custom command data.
  * @returns Command result
  */
-export type cmdFuncOut = (
-  eventData: ccArg,
+export type cmdFuncOut<A> = (
+  eventData: ccArg<A>,
 ) =>
   | CustomCommandResult
   | undefined
   | Promise<CustomCommandResult>
   | Promise<undefined>;
+
+/*
+ * command parameters phase
+ */
+type Phase = "required" | "optional";
+
 /**
  * custom command parameters.
  */
@@ -188,11 +194,11 @@ export class Is {
  *
  * @includeExample src/example/tp.ts[4:27]
  * */
-export class CMD {
+export class CMD<P extends Phase = "required", A extends object = {}> {
   /** command object. */
   #commandObj: CustomCommand;
   /** command function. */
-  #func: cmdFuncOut;
+  #func: cmdFuncOut<A>;
   #option: { tag?: string[]; type: "all" | "any" } = { type: "any" };
   #alias: string[] = [];
   /**
@@ -223,7 +229,7 @@ export class CMD {
    * @param name name of the command
    */
   static create(name: string): CMD {
-    return new CMD({
+    return new CMD<"required", {}>({
       name,
       description: "",
       permissionLevel: CommandPermissionLevel.Any,
@@ -234,10 +240,10 @@ export class CMD {
    * set tab that required when running this command
    *
    */
-  setTagRank(tags: string[], anyOrAll: "any" | "all" = "any"): CMD {
+  setTagRank(tags: string[], anyOrAll: "any" | "all" = "any"): CMD<P, A> {
     this.#option.tag = tags;
     this.#option.type = anyOrAll;
-    return this;
+    return this as any;
   }
 
   /**
@@ -247,9 +253,9 @@ export class CMD {
    * @param a - required?
    * @returns this
    */
-  requireCheat(a: boolean): CMD {
+  requireCheat(a: boolean): CMD<P, A> {
     this.#commandObj.cheatsRequired = a;
-    return this;
+    return this as any;
   }
 
   /**
@@ -265,9 +271,9 @@ export class CMD {
    * @param a - name.
    * @returns this.
    */
-  setName(a: string): CMD {
+  setName(a: string): CMD<P, A> {
     this.#commandObj.name = a;
-    return this;
+    return this as any;
   }
   /**
    * get this command name.
@@ -284,9 +290,9 @@ export class CMD {
    * @param a - name array.
    * @returns this.
    */
-  setAlias(a: string[]): CMD {
+  setAlias(a: string[]): CMD<P, A> {
     this.#alias = a;
-    return this;
+    return this as any;
   }
   /**
    * add this command a name alias
@@ -294,9 +300,9 @@ export class CMD {
    * @param a - name
    * @returns this
    */
-  addAlias(a: string): CMD {
+  addAlias(a: string): CMD<P, A> {
     this.#alias = [...this.#alias, a];
-    return this;
+    return this as any;
   }
   /**
    * get this command name alias.
@@ -313,9 +319,9 @@ export class CMD {
    * @param a - description.
    * @returns this.
    */
-  setDescription(a: string): CMD {
+  setDescription(a: string): CMD<P, A> {
     this.#commandObj.description = a;
-    return this;
+    return this as any;
   }
   /**
    * get this command description.
@@ -332,9 +338,9 @@ export class CMD {
    * @param a - permissionLevel.
    * @returns this.
    */
-  setPermision(a: CommandPermissionLevel): CMD {
+  setPermision(a: CommandPermissionLevel): CMD<P, A> {
     this.#commandObj.permissionLevel = a;
-    return this;
+    return this as any;
   }
   /**
    * get this command permission level.
@@ -367,7 +373,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addBoolean(name: string, require: boolean = true): CMD {
+  addBoolean<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: boolean } : { [P in N]?: boolean })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -376,8 +393,9 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.Boolean });
-    return this;
+    return this as any;
   }
+
   /**
    * add argument type integer or round number,
    * like 1, 2, 3.
@@ -387,7 +405,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addInteger(name: string, require: boolean = true): CMD {
+  addInteger<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: number } : { [P in N]?: number })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -396,7 +425,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.Integer });
-    return this;
+    return this as any;
   }
   /**
    * add argument type float or decimal number,
@@ -407,7 +436,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addFloat(name: string, require: boolean = true): CMD {
+  addFloat<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: number } : { [P in N]?: number })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -416,7 +456,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.Float });
-    return this;
+    return this as any;
   }
   /**
    * add argument type string or text,
@@ -427,7 +467,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addString(name: string, require: boolean = true): CMD {
+  addString<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: string } : { [P in N]?: string })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -436,7 +487,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.String });
-    return this;
+    return this as any;
   }
   /**
    * add argument type entity,
@@ -447,7 +498,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addEntitySelector(name: string, require: boolean = true): CMD {
+  addEntitySelector<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: Entity } : { [P in N]?: Entity })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -456,7 +518,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.EntitySelector });
-    return this;
+    return this as any;
   }
   /**
    * add argument type player only,
@@ -467,7 +529,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addPlayerSelector(name: string, require: boolean = true): CMD {
+  addPlayerSelector<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: Player } : { [P in N]?: Player })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -476,7 +549,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.PlayerSelector });
-    return this;
+    return this as any;
   }
   /**
    * add argument type location or position,
@@ -487,7 +560,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addLocation(name: string, require: boolean = true): CMD {
+  addLocation<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: Vector3 } : { [P in N]?: Vector3 })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -496,7 +580,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.Location });
-    return this;
+    return this as any;
   }
   /**
    * add argument type block,
@@ -507,7 +591,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addBlockType(name: string, require: boolean = true): CMD {
+  addBlockType<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: string } : { [P in N]?: string })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -516,7 +611,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.BlockType });
-    return this;
+    return this as any;
   }
   /**
    * add argument type item.
@@ -526,7 +621,18 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addItemType(name: string, require: boolean = true): CMD {
+  addItemType<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: string } : { [P in N]?: string })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -535,7 +641,7 @@ export class CMD {
       ? this.#commandObj.mandatoryParameters
       : this.#commandObj.optionalParameters;
     arr.push({ name, type: CustomCommandParamType.ItemType });
-    return this;
+    return this as any;
   }
   /**
    * add argument type enum from {@link RegisterEnum}
@@ -546,7 +652,19 @@ export class CMD {
    * @returns this
    * @throws if its a required parameters, but added after optional parameters
    */
-  addEnum(name: string, require: boolean = true, value: string[] = []): CMD {
+  addEnum<N extends string, R extends boolean>(
+    this: P extends "required"
+      ? CMD<P, A>
+      : R extends false
+        ? CMD<P, A>
+        : never,
+    name: N,
+    require: R = true as R,
+    value: string[] = [],
+  ): CMD<
+    R extends true ? "required" : "optional",
+    A & (R extends true ? { [P in N]: string } : { [P in N]?: string })
+  > {
     if (require && this.#commandObj.optionalParameters.length > 0)
       throw new Error(
         "can't add required parameters after optional parameters",
@@ -557,7 +675,7 @@ export class CMD {
     const enumName = name.includes(":") ? name : CONFIG.prefix + name;
     if (!ccEnum.find((v) => v.name === enumName)) RegisterEnum(enumName, value);
     arr.push({ name: enumName, type: CustomCommandParamType.Enum });
-    return this;
+    return this as any;
   }
 
   /**
@@ -566,16 +684,16 @@ export class CMD {
    * @param obj - an array of {@link cmdParam}
    * @returns this
    */
-  setRequireParams(obj: cmdParam): CMD {
+  setRequireParams(obj: CustomCommandParameter[]): CMD<P, A> {
     this.#commandObj.mandatoryParameters = obj;
-    return this;
+    return this as any;
   }
   /**
    * get this custom command required arguments
    *
    * @returns array of required arguments
    */
-  getRequireParams(): cmdParam {
+  getRequireParams(): readonly CustomCommandParameter[] {
     return this.#commandObj.mandatoryParameters || [];
   }
 
@@ -585,16 +703,16 @@ export class CMD {
    * @param obj - an array of {@link cmdParam}
    * @returns this
    */
-  setOptionalParams(obj: cmdParam): CMD {
+  setOptionalParams(obj: CustomCommandParameter[]): CMD<P, A> {
     this.#commandObj.optionalParameters = obj;
-    return this;
+    return this as any;
   }
   /**
    * get this custom command optional arguments
    *
    * @returns array of optional arguments
    */
-  getOptionalParams(): cmdParam {
+  getOptionalParams(): readonly CustomCommandParameter[] {
     return this.#commandObj.optionalParameters || [];
   }
 
@@ -603,7 +721,7 @@ export class CMD {
    *
    * @returns array of required and optional arguments
    */
-  getParameters(): cmdParam {
+  private getParameters(): cmdParam {
     return [
       ...this.#commandObj.mandatoryParameters,
       ...this.#commandObj.optionalParameters,
@@ -616,16 +734,16 @@ export class CMD {
    * @param func - function.
    * @returns this.
    */
-  setFunction(func: cmdFuncOut): CMD {
+  setFunction(func: cmdFuncOut<A>): CMD<P, A> {
     this.#func = func;
-    return this;
+    return this as any;
   }
   /**
    * get this command function.
    *
    * @returns function.
    */
-  getFunction(): cmdFuncOut {
+  getFunction(): cmdFuncOut<A> {
     return this.#func;
   }
 
@@ -665,7 +783,7 @@ export class CMD {
 
     // Panggil bcd dengan format yang diinginkan
     system.run(async () => {
-      const hasil = await this.#func({ source, args: namedArgs });
+      const hasil = await this.#func({ source, args: namedArgs as A });
       if (!hasil || !hasil?.message) return;
       const warna = hasil.status === CustomCommandStatus.Success ? "§a" : "§c";
       if (source.sourceEntity instanceof Player)
@@ -699,7 +817,7 @@ export class CMD {
     this.#commandObj.name = `${CONFIG.prefix}:${this.#commandObj.name}`;
     if (CONFIG.logRegister)
       console.log(`[CMD]§a registered command ${this.#commandObj.name}`);
-    ccList.push(this);
+    ccList.push(this as any);
   }
 }
 

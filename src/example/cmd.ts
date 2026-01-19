@@ -34,3 +34,14 @@ CMD.create("gma")
       source.sourceEntity.setGameMode(GameMode.Adventure);
     return ResultStatus.success();
   });
+
+CMD.create("test")
+  .setDescription("halo")
+  .addFloat("a", true)
+  .requireCheat(false)
+  .addInteger("g", true)
+  .addString("h", false)
+  .addInteger("c", false)
+  .setFunction(({ source, args }) => {
+    return undefined;
+  });
