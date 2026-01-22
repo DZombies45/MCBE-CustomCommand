@@ -5,10 +5,6 @@
  * ```ts
  * {
  *   prefix: "dz",
- *   files: [
- *   "example/tp",
- *   "example/text"
- *   ]
  * }
  * ````
  *

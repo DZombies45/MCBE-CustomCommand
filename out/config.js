@@ -5,10 +5,6 @@
  * ```ts
  * {
  *   prefix: "dz",
- *   files: [
- *   "example/tp",
- *   "example/text"
- *   ]
  * }
  * ````
  *
@@ -16,10 +12,10 @@
  * @property files - your scrint files that you want to load from script/
  */
 export const CONFIG = {
-    prefix: "mynamespace",
-    requireCheatDefault: false,
-    logRegister: true,
-    helpAuto: false,
-    helpCommand: "helpcmd",
-    helpDescription: "show all command from this",
+  prefix: "mynamespace",
+  requireCheatDefault: false,
+  logRegister: true,
+  helpAuto: false,
+  helpCommand: "helpcmd",
+  helpDescription: "show all command from this",
 };
